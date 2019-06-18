@@ -1,0 +1,12 @@
+List of things to add to lambda:
+
+
+1) decouple the lambda for efficiency. 2 lambda functions. One for update and one to call the update function. This will mean that I will call any number of updates based on the orchestration and will speed up updating. 
+2) I need to fix the problem of overgeared.
+3) add function to add any chapter of any novel in past. 
+
+
+
+Front End:
+1) start with making the play button better in mobile.
+2) make the front end more like a streaming web app.
