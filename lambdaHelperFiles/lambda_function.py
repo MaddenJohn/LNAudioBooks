@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 import ssl
 from mechanize import Browser
-
+import html
 
 
 # Add this chapter to the Database
@@ -23,7 +23,7 @@ def update(event, text):
     else:
         print('Input Text: ' + text)
     print('Selected voice: ' + voice)
-    
+
     #Creating new record in DynamoDB table
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(os.environ['DB_TABLE_NAME'])
@@ -35,7 +35,7 @@ def update(event, text):
             'status' : 'PROCESSING'
         }
     )
-    
+
     #Sending notification about new post to SNS
     client = boto3.client('sns')
     client.publish(
@@ -50,7 +50,46 @@ def updateRecord(update,table,newChapter,title):
         print('Updating ' + title + ' to: ' + str(newChapter))
         table.update_item(Key={'Title':title},AttributeUpdates={'Ch':{'Value':newChapter,'Action':'PUT'}})
 
-#scrape for a specific novel and chapter        
+# Update the record in the Database to a new number
+def updateRecord2(update,table,newChapter,title, href):
+    if(update):
+        print('Updating ' + title + ' to: ' + str(newChapter))
+        table.update_item(Key={'Title':title},AttributeUpdates={'Ch':{'Value':newChapter,'Action':'PUT'},'url':{'Value':href,'Action':'PUT'}})
+
+#scrape for a specific novel and chapter
+def scrapeNovelfull(event, novel, chapter, dynoTable, url):
+    domain = "http://novelfull.com"
+    url = domain + url
+    print ("Trying to get ch at: " + str(url))
+    response = requests.get(url)
+    text = html.unescape(response.text)
+    soup = BeautifulSoup(text, "html.parser")
+    for script in soup("script"):
+        script.decompose()
+    for div in soup.find_all("div", {'class':'hidden'}):
+	    div.decompose()
+	    hidden.decompose()
+    tableNextChap = soup.select("#next_chap")
+    try:
+        nextHref = str(tableNextChap[0]['href'])
+        nextChapURL = domain + nextHref
+        print (nextChapURL)
+        try:
+            table = soup.findAll('div',attrs={"class":"cha-words"})
+        except Exception as e:
+            print ("error getting chapter: " + str(e))
+            table = soup.findAll('div',attrs={"id":"chapter-content"})
+        print (len(table))
+        print (table[0].text)
+        text = table[0].text
+        update(event, text)
+        updateRecord2(True, dynoTable, int(chapter) + 1, novel, nextHref)
+        return 1
+    except Exception as e:
+        print ("No New Chapter or error getting chapter: " + str(e))
+        return 0
+
+#scrape for a specific novel and chapter
 def scrape(event, novel, chapter, dynoTable, url):
     ssl._create_default_https_context = ssl._create_unverified_context
     b = Browser()
@@ -87,11 +126,10 @@ def lambda_handler(event, context):
     novel = event["novel"]
     ch = event["chapter"]
     url = event["url"]
+    print (novel, ch, url)
     #Scrape new chapters and update databases
-    update = scrape(event, novel, ch, table, url)
+    if(novel == 'LHP2'):
+        update = scrapeNovelfull(event, novel, ch, table, url)
+    else:
+        update = scrape(event, novel, ch, table, url)
     return update
-
-    
-    
-    
-    
