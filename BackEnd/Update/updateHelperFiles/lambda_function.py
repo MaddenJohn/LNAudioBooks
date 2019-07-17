@@ -76,12 +76,12 @@ def scrapeNovelfull(event, novel, chapter, dynoTable, url):
         print (nextChapURL)
         try:
             table = soup.findAll('div',attrs={"class":"cha-words"})
+            text = table[0].text
         except Exception as e:
             print ("error getting chapter: " + str(e))
             table = soup.findAll('div',attrs={"id":"chapter-content"})
-        print (len(table))
-        print (table[0].text)
-        text = table[0].text
+            text = table[0].text
+        print (text)
         update(event, text)
         updateRecord2(True, dynoTable, int(chapter) + 1, novel, nextHref)
         return 1

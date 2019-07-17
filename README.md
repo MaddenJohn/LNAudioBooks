@@ -14,11 +14,11 @@ Infrastructure:
 
 This infrastructure consistes of of <> main components:
 
-Front End - Static Website - ./s3_files/* :
+Front End - Static Website:
 The front end is a simple static website using HTML, CSS, and Javascript to display the data stored in an S3 bucket and to update the data using the API Gateway endpoint. 
 
 
-Back End - AWS (Lambda, Poly, S3, SNS, DynamoDB, Cloudwatch, API Gateway), Python, BeautifulSoup4, and boto3 - ./Lambda/*
+Back End - AWS (Lambda, Poly, S3, SNS, DynamoDB, Cloudwatch, API Gateway), Python, BeautifulSoup4, and boto3:
 The Back end is built using AWS for its entire infrastructure with a python codebase. 
 
 
