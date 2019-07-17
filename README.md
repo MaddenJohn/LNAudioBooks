@@ -24,4 +24,4 @@ The Back end is built using AWS for its entire infrastructure with a python code
 
 Diagram of the architecture below:
 
-
+![](LNAudioReaderDesign.png)
