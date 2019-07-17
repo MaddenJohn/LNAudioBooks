@@ -12,7 +12,7 @@ zip -r9
 
 Infrastructure:
 
-This infrastructure consistes of of <> main components:
+This infrastructure consistes of of 2 main components:
 
 Front End - Static Website:
 The front end is a simple static website using HTML, CSS, and Javascript to display the data stored in an S3 bucket and to update the data using the API Gateway endpoint. 
